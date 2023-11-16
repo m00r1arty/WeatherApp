@@ -1,6 +1,7 @@
 package com.example.weatherapp.data
 
 data class DayItem(
+    val country: String,
     val city: String,
     val time: String,
     val condition: String,
