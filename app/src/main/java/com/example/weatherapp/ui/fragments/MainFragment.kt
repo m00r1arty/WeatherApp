@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.domain.isPermissionGranted
-import com.example.weatherapp.ui.adapter.VpAdapter
+import com.example.weatherapp.ui.adapter.ViewPageAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment : Fragment() {
@@ -42,16 +42,17 @@ class MainFragment : Fragment() {
     }
 
     private fun init() = with(binding){
-        val adapter = VpAdapter(activity as FragmentActivity, fList)
-        vp.adapter = adapter
-        TabLayoutMediator(tabLayout, vp) {
+        val adapter = ViewPageAdapter(activity as FragmentActivity, fList)
+        viewPage.adapter = adapter
+        TabLayoutMediator(tabLayout, viewPage) {
             tab, position -> tab.text = tList[position]
         }.attach()
     }
 
     private fun permissionListener() {
         pLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            Toast.makeText(activity, "Permission is $it", Toast.LENGTH_LONG).show()
+            if (it == true) Toast.makeText(activity, "Разрешение дано!", Toast.LENGTH_LONG).show()
+            else Toast.makeText(activity, "Разрешение не дано!", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -60,6 +61,10 @@ class MainFragment : Fragment() {
             permissionListener()
             pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
+
+    private fun requsetWeatherData(city: String) {
+
     }
 
     companion object {
