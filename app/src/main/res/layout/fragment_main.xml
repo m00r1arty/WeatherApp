@@ -57,9 +57,8 @@
                 android:layout_width="112dp"
                 android:layout_height="112dp"
                 android:layout_marginTop="4dp"
-                android:background="@null"
                 android:contentDescription="TODO"
-                android:src="@drawable/ic_launcher_foreground"
+                android:src="@drawable/test"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvCity" />
@@ -70,14 +69,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="3*С"
                 android:textColor="@color/white"
                 android:textSize="48sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imWeather"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="MissingConstraints"
+                tools:text="0°C" />
 
             <TextView
                 android:id="@+id/tvCondition"
@@ -95,7 +94,7 @@
                 android:id="@+id/tvMaxMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="15*C/5*C"
+                android:text="0°C/-1°C"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/ibSync"
