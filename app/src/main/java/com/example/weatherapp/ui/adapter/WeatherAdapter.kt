@@ -9,15 +9,32 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.data.model.WeatherModel
 import com.example.weatherapp.databinding.ListItemBinding
+import com.squareup.picasso.Picasso
 
-class WeatherAdapter : ListAdapter<WeatherModel, WeatherAdapter.Holder>(Comparator()) {
-    class Holder(view: View) : RecyclerView.ViewHolder(view) {
+class WeatherAdapter(
+    private val listener: Listener?
+) : ListAdapter<WeatherModel, WeatherAdapter.Holder>(Comparator()) {
+    class Holder(
+        view: View,
+        private val listener: Listener?
+    ) : RecyclerView.ViewHolder(view) {
         private val binding = ListItemBinding.bind(view)
+        private var itemTemp: WeatherModel? = null
+
+        init {
+            itemView.setOnClickListener {
+                itemTemp?.let { it1 -> listener?.onCLickWeatherCard(it1) }
+            }
+        }
 
         fun bind(item: WeatherModel) = with(binding){
+            itemTemp = item
+            val currentTemp = if (item.currentTemp.isEmpty()) "${item.maxTemp}°C / ${item.minTemp}°C"
+                            else item.currentTemp +"°C"
             tvDate.text = item.time
             tvCondition.text = item.condition
-            tvTemp.text = item.currentTemp
+            tvTemp.text = currentTemp
+            Picasso.get().load("https:" + item.imageUrl).into(im)
         }
 
     }
@@ -34,10 +51,16 @@ class WeatherAdapter : ListAdapter<WeatherModel, WeatherAdapter.Holder>(Comparat
         val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.list_item, parent, false)
-        return Holder(view)
+        return Holder(view, listener)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.bind(getItem(position))
+    }
+
+    interface Listener {
+        fun onCLickWeatherCard(item: WeatherModel) {
+
+        }
     }
 }
