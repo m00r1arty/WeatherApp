@@ -42,7 +42,11 @@ dependencies {
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("androidx.test:core-ktx:1.5.0")
 
+    // For test
+    testImplementation("org.mockito:mockito-core:+")
+    androidTestImplementation("org.mockito:mockito-android:+")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")

@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,15 +17,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.weatherapp.data.model.WeatherModel
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.domain.ApiConstants.API_KEY
-import com.example.weatherapp.domain.ApiConstants.BASE_URL
-import com.example.weatherapp.domain.isPermissionGranted
+import com.example.weatherapp.domain.Constants.API_KEY
+import com.example.weatherapp.domain.Constants.BASE_URL
 import com.example.weatherapp.ui.DialogManager
 import com.example.weatherapp.ui.adapter.ViewPageAdapter
 import com.example.weatherapp.ui.viewmodel.MainViewModel
@@ -44,6 +45,7 @@ class MainFragment : Fragment() {
             DaysFragment.newInstance()
         )
     }
+
     private val tList = listOf("Hours", "Days")
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var pLauncher: ActivityResultLauncher<String>
@@ -66,16 +68,15 @@ class MainFragment : Fragment() {
     }
 
     private fun updateCurrentCard() = with(binding) {
-        viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
-            val maxMinTemp = "${it.maxTemp}°C / ${it.minTemp}°C"
-            val currentTemp = if (it.currentTemp.isEmpty()) maxMinTemp else it.currentTemp +"°C"
-            tvCity.text = it.city
-            tvDate.text = it.time
-            Picasso.get().load("https:" + it.imageUrl).into(imWeather)
+        viewModel.liveDataCurrent.observe(viewLifecycleOwner) { currentData ->
+            val maxMinTemp = "${currentData.maxTemp}°C / ${currentData.minTemp}°C"
+            val currentTemp = if (currentData.currentTemp.isEmpty()) maxMinTemp else "${currentData.currentTemp}°C"
+            tvCity.text = currentData.city
+            tvDate.text = currentData.time
+            Picasso.get().load("https:" + currentData.imageUrl).into(imWeather)
             tvCurrentTemp.text = currentTemp
-            tvCondition.text = it.condition
-            tvMaxMin.text = if (it.currentTemp.isEmpty()) "" else maxMinTemp
-
+            tvCondition.text = currentData.condition
+            tvMaxMin.text = if (currentData.currentTemp.isEmpty()) "" else maxMinTemp
         }
     }
 
@@ -84,33 +85,35 @@ class MainFragment : Fragment() {
         checkLocation()
     }
 
-    private fun init() {
-        binding.apply {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-            val adapter = ViewPageAdapter(requireActivity(), fList)
-            viewPage.adapter = adapter
-            TabLayoutMediator(tabLayout, viewPage) { tab, position ->
-                tab.text = tList[position]
-            }.attach()
-            ibSync.setOnClickListener {
-                tabLayout.selectTab(tabLayout.getTabAt(0))
-                checkLocation()
-            }
-            ibSearch.setOnClickListener {
-                DialogManager.searchByNameDialog(requireContext(), object : DialogManager.Listener{
-                    override fun onClick(name: String?) {
-                        name?.let { it1 -> requestWeatherData(it1) }
-                    }
-                })
-            }
+    private fun init() = with(binding) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        val adapter = ViewPageAdapter(requireActivity(), fList)
+        viewPage.adapter = adapter
+        TabLayoutMediator(tabLayout, viewPage) { tab, position ->
+            tab.text = tList[position]
+        }.attach()
+        ibSync.setOnClickListener {
+            tabLayout.selectTab(tabLayout.getTabAt(0))
+            checkLocation()
         }
+        ibSearch.setOnClickListener {
+            showSearchDialog()
+        }
+    }
+
+    private fun showSearchDialog() {
+        DialogManager.searchByNameDialog(requireContext(), object : DialogManager.Listener {
+            override fun onClick(name: String?) {
+                name?.let { requestWeatherData(it) }
+            }
+        })
     }
 
     private fun checkLocation() {
         if (isLocationEnabled()) {
             getLocation()
         } else {
-            DialogManager.locationSettingsDialog(requireContext(), object : DialogManager.Listener{
+            DialogManager.locationSettingsDialog(requireContext(), object : DialogManager.Listener {
                 override fun onClick(name: String?) {
                     startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                 }
@@ -119,65 +122,73 @@ class MainFragment : Fragment() {
     }
 
     private fun isLocationEnabled(): Boolean {
-        val locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        return locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
     }
 
+    @SuppressLint("MissingPermission")
     private fun getLocation() {
         val cancelToken = CancellationTokenSource()
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
+        if (isLocationPermissionGranted()) {
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancelToken.token)
+                .addOnCompleteListener { result ->
+                    result.result?.let {
+                        requestWeatherData("${it.latitude},${it.longitude}")
+                    }
+                }
         }
-        fusedLocationClient
-            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancelToken.token)
-            .addOnCompleteListener {
-                requestWeatherData("${it.result.latitude},${it.result.longitude}")
-            }
     }
 
     private fun permissionListener() {
-        pLauncher = registerForActivityResult(ActivityResultContracts
-            .RequestPermission()) { isGranted ->
-            val message = if (isGranted) "Permission done!" else "Permission not set"
+        pLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            val message = if (isGranted) "Permission granted!" else "Permission denied"
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
         }
     }
 
+    private fun isLocationPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     private fun checkPermission() {
-        if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (!isLocationPermissionGranted()) {
             permissionListener()
             pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
     private fun requestWeatherData(city: String) {
-        val url = "$BASE_URL$API_KEY&q=$city&days=6&aqi=no&alerts=no"
+        val url = buildWeatherApiUrl(city)
         val queue = Volley.newRequestQueue(requireContext())
         val request = StringRequest(
             Request.Method.GET,
             url,
-            { result -> parseWeatherData(result)},
-            { error -> Log.d("MyLog", "Error $error") }
+            { result -> parseWeatherData(result) },
+            { error -> handleWeatherRequestError(error) }
         )
         queue.add(request)
+    }
+
+    private fun buildWeatherApiUrl(city: String): String {
+        return "$BASE_URL$API_KEY&q=$city&days=6&aqi=no&alerts=no"
+    }
+
+    private fun handleWeatherRequestError(error: VolleyError) {
+        Log.e("MyLog", "Error $error")
+        // Обработайте ошибку, покажите тост или обновите интерфейс соответственно
     }
 
     private fun parseWeatherData(result: String) {
         val mainObject = JSONObject(result)
         val list = parseDays(mainObject)
         parseCurrentData(mainObject, list[0])
-
     }
 
-    private fun parseDays(mainObject: JSONObject) : List<WeatherModel> {
-        val list = ArrayList<WeatherModel>()
+    private fun parseDays(mainObject: JSONObject): List<WeatherModel> {
+        val list = mutableListOf<WeatherModel>()
         val name = mainObject.getJSONObject("location").getString("name")
         val daysArray = mainObject.getJSONObject("forecast")
             .getJSONArray("forecastday")
