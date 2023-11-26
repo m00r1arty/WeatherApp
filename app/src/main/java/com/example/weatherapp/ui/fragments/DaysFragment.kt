@@ -16,7 +16,7 @@ import com.example.weatherapp.ui.viewmodel.MainViewModel
 class DaysFragment() : Fragment(), Listener {
     private lateinit var binding: FragmentDaysBinding
     private lateinit var adapter: WeatherAdapter
-    private val viewModel: MainViewModel by activityViewModels()
+    val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
