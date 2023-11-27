@@ -6,17 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherapp.data.model.WeatherModel
+import com.example.weatherapp.data.WeatherModel
 import com.example.weatherapp.databinding.FragmentDaysBinding
+import com.example.weatherapp.domain.daysextensions.InitDataFromDays.initRecyclerView
+import com.example.weatherapp.domain.daysextensions.InitDataFromDays.observeWeatherData
 import com.example.weatherapp.ui.adapter.WeatherAdapter.Listener
 import com.example.weatherapp.ui.adapter.WeatherAdapter
 import com.example.weatherapp.ui.viewmodel.MainViewModel
 
-class DaysFragment() : Fragment(), Listener {
-    private lateinit var binding: FragmentDaysBinding
-    private lateinit var adapter: WeatherAdapter
-    val viewModel: MainViewModel by activityViewModels()
+class DaysFragment : Fragment(), Listener {
+    internal lateinit var binding: FragmentDaysBinding
+    internal lateinit var adapter: WeatherAdapter
+    internal val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,26 +27,18 @@ class DaysFragment() : Fragment(), Listener {
         return binding.root
     }
 
-    private fun init() = with(binding) {
-        adapter = WeatherAdapter(this@DaysFragment)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = adapter
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        init()
-        viewModel.liveDataList.observe(viewLifecycleOwner) {
-            adapter.submitList(it.subList(1, it.size))
-        }
+        initRecyclerView()
+        observeWeatherData()
+    }
+
+    override fun onCLickWeatherCard(item: WeatherModel) {
+        viewModel.liveDataCurrent.value = item
     }
 
     companion object {
         @JvmStatic
         fun newInstance() = DaysFragment()
-    }
-
-    override fun onCLickWeatherCard(item: WeatherModel) {
-        viewModel.liveDataCurrent.value = item
     }
 }

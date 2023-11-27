@@ -1,4 +1,4 @@
-package com.example.weatherapp.domain
+package com.example.weatherapp.domain.mainextensions
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -10,7 +10,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.example.weatherapp.domain.ParsingData.requestWeatherData
+import com.example.weatherapp.domain.mainextensions.ParsingData.requestWeatherData
 import com.example.weatherapp.ui.DialogManager
 import com.example.weatherapp.ui.fragments.MainFragment
 import com.google.android.gms.location.Priority
@@ -33,8 +33,8 @@ object LocationManager {
     private fun MainFragment.getLocation() {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancelToken.token)
-                .addOnCompleteListener { result ->
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY,
+                cancelToken.token).addOnCompleteListener { result ->
                     result.result?.let {
                         requestWeatherData("${it.latitude},${it.longitude}")
                     }
@@ -42,18 +42,12 @@ object LocationManager {
         }
     }
 
-    private fun MainFragment.isLocationPermissionGranted(): Boolean =
-        ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-    private fun MainFragment.isLocationEnabled(): Boolean {
-        val locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
-        return locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
-    }
-
-
+    private fun MainFragment.isLocationPermissionGranted() =
+        ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun MainFragment.isLocationEnabled()  =
+        (activity?.getSystemService(Context.LOCATION_SERVICE) as?
+                LocationManager)?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
 
     fun MainFragment.checkPermission() {
         if (!isLocationPermissionGranted()) {

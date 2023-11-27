@@ -1,34 +1,32 @@
-package com.example.weatherapp.domain
+package com.example.weatherapp.domain.mainextensions
 
 import android.util.Log
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.weatherapp.data.model.WeatherModel
+import com.example.weatherapp.data.WeatherModel
+import com.example.weatherapp.domain.Constants
 import com.example.weatherapp.ui.fragments.MainFragment
 import org.json.JSONObject
 
 object ParsingData {
     fun MainFragment.requestWeatherData(city: String) {
-        val url = buildWeatherApiUrl(city)
-        val queue = Volley.newRequestQueue(requireContext())
-        val request = StringRequest(
-            Request.Method.GET,
-            url,
-            { result -> parseWeatherData(result) },
-            { error -> handleWeatherRequestError(error) }
+        Volley.newRequestQueue(requireContext()).add(
+            StringRequest(
+                Request.Method.GET,
+                buildWeatherApiUrl(city),
+                { result -> parseWeatherData(result) },
+                { error -> handleWeatherRequestError(error) }
+            )
         )
-        queue.add(request)
     }
 
-    private fun buildWeatherApiUrl(city: String): String {
-        return "${Constants.BASE_URL}${Constants.API_KEY}&q=$city&days=6&aqi=no&alerts=no"
-    }
+    private fun buildWeatherApiUrl(city: String): String =
+        "${Constants.BASE_URL}${Constants.API_KEY}&q=$city&days=6&aqi=no&alerts=no"
 
     private fun handleWeatherRequestError(error: VolleyError) {
         Log.e("MyLog", "Error $error")
-        // Обработайте ошибку, покажите тост или обновите интерфейс соответственно
     }
 
     private fun MainFragment.parseWeatherData(result: String) {
@@ -65,19 +63,16 @@ object ParsingData {
     }
 
     private fun MainFragment.parseCurrentData(mainObject: JSONObject, weatherItem: WeatherModel) {
-        val item = WeatherModel(
+        val currentData = mainObject.getJSONObject("current")
+        viewModel.liveDataCurrent.value = WeatherModel(
             mainObject.getJSONObject("location").getString("name"),
-            mainObject.getJSONObject("current").getString("last_updated"),
-            mainObject.getJSONObject("current")
-                .getJSONObject("condition").getString("text"),
-            mainObject.getJSONObject("current").getString("temp_c")
-                .toFloat().toInt().toString(),
+            currentData.getString("last_updated"),
+            currentData.getJSONObject("condition").getString("text"),
+            currentData.getString("temp_c").toFloat().toInt().toString(),
             weatherItem.maxTemp,
             weatherItem.minTemp,
-            mainObject.getJSONObject("current")
-                .getJSONObject("condition").getString("icon"),
-            weatherItem.hours,
+            currentData.getJSONObject("condition").getString("icon"),
+            weatherItem.hours
         )
-        viewModel.liveDataCurrent.value = item
     }
 }

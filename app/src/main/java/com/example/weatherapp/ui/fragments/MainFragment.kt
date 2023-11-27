@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.activityViewModels
 import com.example.weatherapp.databinding.FragmentMainBinding
-import com.example.weatherapp.domain.Extensions.init
-import com.example.weatherapp.domain.Extensions.updateCurrentCard
-import com.example.weatherapp.domain.LocationManager.checkLocation
-import com.example.weatherapp.domain.LocationManager.checkPermission
+import com.example.weatherapp.domain.mainextensions.Extensions.init
+import com.example.weatherapp.domain.mainextensions.Extensions.updateCurrentCard
+import com.example.weatherapp.domain.mainextensions.LocationManager.checkLocation
+import com.example.weatherapp.domain.mainextensions.LocationManager.checkPermission
 import com.example.weatherapp.ui.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 
