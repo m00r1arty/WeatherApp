@@ -8,12 +8,12 @@ import org.json.JSONArray
 
 object InitDataFromHours {
 
-    fun HoursFragment.initRecyclerView() {
-        with(binding.recyclerView) {
-            layoutManager = LinearLayoutManager(requireActivity())
-            adapter = WeatherAdapter(null)
-        }
+    fun HoursFragment.initRecyclerView() = with(binding){
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        adapter = WeatherAdapter(null)
+        recyclerView.adapter = adapter
     }
+
 
     fun HoursFragment.observeWeatherData() {
         viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
@@ -37,5 +37,9 @@ object InitDataFromHours {
             )
         }
     }
+
+
+
+
 
 }
