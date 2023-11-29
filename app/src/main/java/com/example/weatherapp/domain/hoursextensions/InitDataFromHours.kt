@@ -7,20 +7,30 @@ import com.example.weatherapp.ui.fragments.HoursFragment
 import org.json.JSONArray
 
 object InitDataFromHours {
-
-    fun HoursFragment.initRecyclerView() = with(binding){
+    /**
+     * Инициализирует RecyclerView для отображения данных о часах.
+     */
+    fun HoursFragment.initRecyclerView() = with(binding) {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = WeatherAdapter(null)
         recyclerView.adapter = adapter
     }
 
-
+    /**
+     * Наблюдает за данными о текущей погоде и обновляет RecyclerView.
+     */
     fun HoursFragment.observeWeatherData() {
         viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
             adapter.submitList(getHoursList(it))
         }
     }
 
+    /**
+     * Получает список моделей погоды для каждого часа из JSON-строки.
+     *
+     * @param weatherItem Модель погоды с информацией о часах.
+     * @return Список моделей погоды для каждого часа.
+     */
     private fun getHoursList(weatherItem: WeatherModel): List<WeatherModel> {
         val hoursArray = JSONArray(weatherItem.hours)
         return (0 until hoursArray.length()).map { i ->
@@ -37,9 +47,5 @@ object InitDataFromHours {
             )
         }
     }
-
-
-
-
-
 }
+

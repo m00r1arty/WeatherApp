@@ -9,7 +9,9 @@ class ViewPageAdapter(
     private val list: List<Fragment>
 ) : FragmentStateAdapter(fa) {
 
+    // Возвращает общее количество фрагментов в списке
     override fun getItemCount(): Int = list.size
 
+    // Создает и возвращает фрагмент для указанной позиции
     override fun createFragment(position: Int): Fragment = list[position]
 }

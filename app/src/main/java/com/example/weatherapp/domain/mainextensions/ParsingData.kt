@@ -11,6 +11,11 @@ import com.example.weatherapp.ui.fragments.MainFragment
 import org.json.JSONObject
 
 object ParsingData {
+    /**
+     * Запрос данных о погоде с использованием Volley.
+     *
+     * @param city Название города для запроса погоды.
+     */
     fun MainFragment.requestWeatherData(city: String) {
         Volley.newRequestQueue(requireContext()).add(
             StringRequest(
@@ -22,19 +27,41 @@ object ParsingData {
         )
     }
 
+    /**
+     * Строит URL для запроса погоды на основе города.
+     *
+     * @param city Название города.
+     * @return Сформированный URL для запроса погоды.
+     */
     private fun buildWeatherApiUrl(city: String): String =
         "${Constants.BASE_URL}${Constants.API_KEY}&q=$city&days=6&aqi=no&alerts=no"
 
+    /**
+     * Обрабатывает ошибку запроса погоды.
+     *
+     * @param error Объект ошибки Volley.
+     */
     private fun handleWeatherRequestError(error: VolleyError) {
         Log.e("MyLog", "Error $error")
     }
 
+    /**
+     * Парсит данные о погоде из JSON-строки.
+     *
+     * @param result JSON-строка с данными о погоде.
+     */
     private fun MainFragment.parseWeatherData(result: String) {
         val mainObject = JSONObject(result)
         val list = parseDays(mainObject)
         parseCurrentData(mainObject, list[0])
     }
 
+    /**
+     * Парсит данные о погоде на несколько дней из JSON-объекта.
+     *
+     * @param mainObject JSON-объект с данными о погоде.
+     * @return Список моделей погоды на несколько дней.
+     */
     private fun MainFragment.parseDays(mainObject: JSONObject): List<WeatherModel> {
         val list = mutableListOf<WeatherModel>()
         val name = mainObject.getJSONObject("location").getString("name")
@@ -62,6 +89,12 @@ object ParsingData {
         return list
     }
 
+    /**
+     * Парсит текущие данные о погоде из JSON-объекта.
+     *
+     * @param mainObject JSON-объект с данными о погоде.
+     * @param weatherItem Модель погоды для получения некоторых значений.
+     */
     private fun MainFragment.parseCurrentData(mainObject: JSONObject, weatherItem: WeatherModel) {
         val currentData = mainObject.getJSONObject("current")
         viewModel.liveDataCurrent.value = WeatherModel(
