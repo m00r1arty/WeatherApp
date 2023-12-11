@@ -1,8 +1,8 @@
-package com.example.weatherapp.domain.model
+package com.example.weatherapp.data.model.response
 
-import com.example.weatherapp.domain.model.responsebody.CurrentForecastResponse
-import com.example.weatherapp.domain.model.responsebody.ForecastResponse
-import com.example.weatherapp.domain.model.responsebody.LocationResponse
+import com.example.weatherapp.data.model.response.responsebody.CurrentForecastResponse
+import com.example.weatherapp.data.model.response.responsebody.ForecastResponse
+import com.example.weatherapp.data.model.response.responsebody.LocationResponse
 import com.google.gson.annotations.SerializedName
 
 data class WeatherResponse(

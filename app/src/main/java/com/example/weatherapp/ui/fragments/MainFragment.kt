@@ -10,7 +10,9 @@ import androidx.fragment.app.activityViewModels
 import com.example.weatherapp.databinding.FragmentMainBinding
 import com.example.weatherapp.ui.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
 //    // Список фрагментов для использования в PagerAdapter
 //    internal val fList by lazy {
@@ -40,6 +42,7 @@ class MainFragment : Fragment() {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 //
 //    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        super.onViewCreated(view, savedInstanceState)

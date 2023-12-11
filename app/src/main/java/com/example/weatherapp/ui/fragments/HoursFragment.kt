@@ -6,12 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherapp.domain.model.WeatherModel
 import com.example.weatherapp.databinding.FragmentHoursBinding
 import com.example.weatherapp.ui.viewmodel.MainViewModel
-import org.json.JSONArray
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HoursFragment : Fragment() {
     // Привязка для доступа к Views в макете фрагмента
     internal lateinit var binding: FragmentHoursBinding

@@ -3,10 +3,15 @@ package com.example.weatherapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
+import com.example.weatherapp.data.network.NetworkService
 import com.example.weatherapp.data.repositories.WeatherRepository
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val weatherRepository = WeatherRepository()
+    private val weatherRepository = WeatherRepository(NetworkService.getInstance().weatherApi)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,16 +20,10 @@ class MainActivity : AppCompatActivity() {
         val apiKey = "516e8d43fcac405c8a392705231411"
         val cityName = "Kirov"
 
-        weatherRepository.getWeather(apiKey, cityName,
-            onResponse = { weatherModel ->
-                // Обработка данных о погоде
-                Log.e("LOGGGG", weatherModel.toString())
-            },
-            onFailure = { errorMessage ->
-                // Обработка ошибок
-                Log.e("LOGGGG", errorMessage)
-            }
-        )
+        lifecycleScope.launch {
+            val currentCardWeatherModel = weatherRepository.getWeather(apiKey, cityName)
+            Log.e("LOGGGG", currentCardWeatherModel.toString())
+        }
 
     }
 }

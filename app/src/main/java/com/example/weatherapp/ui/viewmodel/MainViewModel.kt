@@ -1,13 +1,13 @@
 package com.example.weatherapp.ui.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.weatherapp.domain.model.WeatherModel
+import com.example.weatherapp.data.repositories.WeatherRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    // LiveData для текущей погоды
-    val liveDataCurrent = MutableLiveData<WeatherModel>()
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val repository: WeatherRepository
+): ViewModel() {
 
-    // LiveData для списка моделей погоды
-    val liveDataList = MutableLiveData<List<WeatherModel>>()
 }
