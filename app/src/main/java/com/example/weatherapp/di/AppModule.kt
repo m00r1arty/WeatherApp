@@ -21,5 +21,4 @@ object AppModule {
         networkService.weatherApi
 
 
-
 }

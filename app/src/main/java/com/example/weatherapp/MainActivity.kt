@@ -18,11 +18,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val apiKey = "516e8d43fcac405c8a392705231411"
-        val cityName = "Kirov"
+        val cityName = "Kirov-Chepetsk"
 
         lifecycleScope.launch {
-            val currentCardWeatherModel = weatherRepository.getWeather(apiKey, cityName)
+            val currentCardWeatherModel = weatherRepository.getCurrentWeatherCard(apiKey, cityName)
+            val daysCardWeatherModel = weatherRepository.getDaysCardWeather(apiKey, cityName)
+            val daysItemWeatherModel = weatherRepository.getDaysItemWeather(apiKey, cityName)
+            val hoursItemWeatherModel = weatherRepository.getHoursItemWeather(apiKey, cityName)
             Log.e("LOGGGG", currentCardWeatherModel.toString())
+            Log.e("LOGGGG", daysCardWeatherModel.toString())
+            Log.e("LOGGGG", daysItemWeatherModel.toString())
+            Log.e("LOGGGG", hoursItemWeatherModel.toString())
         }
 
     }
