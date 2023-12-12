@@ -9,6 +9,6 @@ data class LocationResponse(
     @SerializedName("lat")  private val lat: Float? = null,
     @SerializedName("lon") private val lon: Float? = null,
     @SerializedName("tz_id") private val tzId: String? = null,
-    @SerializedName("localtime_epoch") private val localtimeEpoch: Long? = null,
-    @SerializedName("localtime") private val localtime: String? = null,
+    @SerializedName("localtime_epoch") val localtimeEpoch: Long? = null,
+    @SerializedName("localtime") val localtime: String? = null,
 )

@@ -1,7 +1,6 @@
 //package com.example.weatherapp.domain.mainextensions
 //
 //import android.util.Log
-//import com.example.weatherapp.domain.model.WeatherModel
 //import com.example.weatherapp.ui.fragments.MainFragment
 //import org.json.JSONObject
 //

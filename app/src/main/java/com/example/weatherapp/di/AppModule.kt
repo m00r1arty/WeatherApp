@@ -1,6 +1,8 @@
 package com.example.weatherapp.di
 
 import com.example.weatherapp.data.network.NetworkService
+import com.example.weatherapp.data.network.WeatherApi
+import com.example.weatherapp.data.repositories.WeatherRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +21,12 @@ object AppModule {
     @Singleton
     fun provideWeatherApi(networkService: NetworkService) =
         networkService.weatherApi
+
+    @Singleton
+    @Provides
+    fun provideFootballRepository(weatherApi: WeatherApi): WeatherRepository {
+        return WeatherRepository(weatherApi)
+    }
 
 
 }

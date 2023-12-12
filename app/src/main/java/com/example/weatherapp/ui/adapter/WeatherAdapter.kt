@@ -7,7 +7,6 @@
 //import androidx.recyclerview.widget.ListAdapter
 //import androidx.recyclerview.widget.RecyclerView
 //import com.example.weatherapp.R
-//import com.example.weatherapp.domain.model.WeatherModel
 //import com.example.weatherapp.databinding.ListItemBinding
 //import com.squareup.picasso.Picasso
 //

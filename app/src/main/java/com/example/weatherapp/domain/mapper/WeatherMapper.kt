@@ -8,7 +8,7 @@ import com.example.weatherapp.data.model.response.WeatherResponse
 
 fun WeatherResponse.toCurrentCardWeather() = CurrentWeatherCardModel(
     nameCity = this.location?.name,
-    dateTime = this.forecast?.forecastDay?.get(0)?.date,
+    dateTime = this.location?.localtime,
     conditionText = this.current?.condition?.text,
     currentTemp = this.current?.tempC,
     maxTemp = this.forecast?.forecastDay?.get(0)?.day?.maxtemp_c,
