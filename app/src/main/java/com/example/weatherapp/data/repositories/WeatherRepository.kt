@@ -21,37 +21,37 @@ class WeatherRepository @Inject constructor(
     suspend fun getCurrentWeatherCard(
         apiKey: String,
         cityName: String,
-    ): CurrentWeatherCardModel {
+    ): CurrentWeatherCardModel? {
         val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
         val response: WeatherResponse? = handleCall(call)
-        return response!!.toCurrentCardWeather()
+        return response?.toCurrentCardWeather()
     }
 
     suspend fun getDaysCardWeather(
         apiKey: String,
         cityName: String,
-    ): DaysWeatherCardModel {
+    ): DaysWeatherCardModel? {
         val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
         val response: WeatherResponse? = handleCall(call)
-        return response!!.toDaysCardWeather()
+        return response?.toDaysCardWeather()
     }
 
     suspend fun getDaysItemWeather(
         apiKey: String,
         cityName: String,
-    ): DaysWeatherItemModel {
+    ): DaysWeatherItemModel? {
         val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
         val response: WeatherResponse? = handleCall(call)
-        return response!!.toDaysItemWeather()
+        return response?.toDaysItemWeather()
     }
 
     suspend fun getHoursItemWeather(
         apiKey: String,
         cityName: String,
-    ): HoursWeatherItemModel {
+    ): HoursWeatherItemModel? {
         val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
         val response: WeatherResponse? = handleCall(call)
-        return response!!.toHoursItemWeather()
+        return response?.toHoursItemWeather()
     }
 
 }

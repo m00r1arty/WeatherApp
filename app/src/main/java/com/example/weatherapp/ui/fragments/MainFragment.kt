@@ -1,8 +1,6 @@
 package com.example.weatherapp.ui.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,22 +27,26 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.currentWeather.observe(viewLifecycleOwner) {weatherData ->
-            binding.tvCity.text = weatherData.nameCity
-            binding.tvDate.text = weatherData.dateTime
-            binding.tvCurrentTemp.text = weatherData.currentTemp.toString()
-            binding.tvCondition.text = weatherData.conditionText
-            binding.tvMaxMin.text = "${weatherData.maxTemp.toString()}°C/${weatherData.minTemp.toString()}°C"
-            Log.e("LOGGGG", weatherData.currentTemp.toString())
-            Picasso.get()
-                .load("https:" + weatherData.imageUrl)
-                .placeholder(R.drawable.ic_test)
-                .error(R.drawable.ic_error)
-                .into(binding.imWeather)
+        viewModel.currentWeather.observe(viewLifecycleOwner) { weatherData ->
+            binding.apply {
+                tvCity.text = weatherData.nameCity
+                tvDateTime.text = weatherData.dateTime
+                tvCurrentTemp.text = weatherData.currentTemp.toString()
+                tvCondition.text = weatherData.conditionText
+                tvMaxMin.text = getString(
+                    R.string.max_min_temp,
+                    weatherData.maxTemp.toString(),
+                    weatherData.minTemp.toString()
+                )
+                Picasso.get()
+                    .load("https:" + weatherData.imageUrl)
+                    .placeholder(R.drawable.ic_test)
+                    .error(R.drawable.ic_error)
+                    .into(imWeather)
+            }
         }
     }
 
@@ -89,7 +91,7 @@ class MainFragment : Fragment() {
 //    private fun showSearchDialog() {
 //        DialogManager.searchByNameDialog(requireContext()) { name ->
 //            name?.let { requestWeatherData(it) }
-//        }
+//        }tList
 //    }
 //
 //    private fun updateCurrentCard() = with(binding) {

@@ -25,7 +25,9 @@ class MainViewModel @Inject constructor(
                 val apiKey = "516e8d43fcac405c8a392705231411"
                 val cityName = "Kirov-Chepetsk"
                 val weatherData = repository.getCurrentWeatherCard(apiKey, cityName)
-                _currentWeatherCard.value = weatherData
+                weatherData?.let {
+                    _currentWeatherCard.value = it
+                }
             } catch (e: Exception) {
                 e.message?.let { Log.e("LOGGGG: ", it) }
             }

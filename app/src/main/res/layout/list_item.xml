@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
-    android:backgroundTint="@color/card_blue_bg"
+    android:backgroundTint="@color/white"
     app:cardCornerRadius="8dp"
     app:cardElevation="0dp">
 
@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/tvDate"
+            android:id="@+id/tvDateItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -25,20 +25,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvCondition"
+            android:id="@+id/tvConditionItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/aubrey"
             android:text="Sunny"
-            android:textColor="@color/white"
+            android:textColor="@color/card_blue_bg"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tvDate"
-            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+            app:layout_constraintStart_toStartOf="@+id/tvDateItem"
+            app:layout_constraintTop_toBottomOf="@+id/tvDateItem" />
 
         <ImageView
-            android:id="@+id/im"
+            android:id="@+id/imWeatherItem"
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -47,17 +47,17 @@
             app:srcCompat="@drawable/ic_launcher_foreground" />
 
         <TextView
-            android:id="@+id/tvTemp"
+            android:id="@+id/tvTempItem"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:fontFamily="@font/aubrey"
             android:gravity="center"
             android:text="20°C"
-            android:textColor="@color/white"
+            android:textColor="@color/card_blue_bg"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/im"
-            app:layout_constraintStart_toEndOf="@+id/tvDate"
+            app:layout_constraintEnd_toStartOf="@+id/imWeatherItem"
+            app:layout_constraintStart_toEndOf="@+id/tvDateItem"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
