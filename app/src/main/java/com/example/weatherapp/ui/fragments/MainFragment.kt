@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMainBinding
+import com.example.weatherapp.ui.adapter.DaysAdapter
 import com.example.weatherapp.ui.viewmodel.MainViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,8 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
+    private lateinit var adapter: DaysAdapter
     private lateinit var binding: FragmentMainBinding
-
     private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -29,6 +31,16 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.apply {
+            daysRecycler.layoutManager = LinearLayoutManager(activity)
+            adapter = DaysAdapter()
+            daysRecycler.adapter = adapter
+        }
+
+        viewModel.daysList.observe(viewLifecycleOwner) { daysList ->
+            adapter.submitList(daysList)
+        }
 
         viewModel.currentWeather.observe(viewLifecycleOwner) { weatherData ->
             binding.apply {
@@ -48,11 +60,13 @@ class MainFragment : Fragment() {
                     .into(imWeather)
             }
         }
+
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.getCurrentWeatherCard()
+        viewModel.updateDaysList()
     }
 
     companion object {

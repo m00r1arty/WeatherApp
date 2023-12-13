@@ -14,11 +14,15 @@ fun WeatherResponse.toCurrentCardWeather() = CurrentWeatherCardModel(
     imageUrl = this.current?.condition?.icon
 )
 
-fun WeatherResponse.toDaysItemWeather() = DaysWeatherItemModel(
-    dateTime = this.forecast?.forecastDay?.get(0)?.date,
-    conditionText = this.forecast?.forecastDay?.get(0)?.day?.condition?.text,
-    avgTemp = this.forecast?.forecastDay?.get(0)?.day?.avgTempC,
-    maxTemp = this.forecast?.forecastDay?.get(0)?.day?.maxTempC,
-    minTemp = this.forecast?.forecastDay?.get(0)?.day?.minTempC,
-    imageUrl = this.forecast?.forecastDay?.get(0)?.day?.condition?.icon,
-)
+fun WeatherResponse.toDaysItemWeatherList(): List<DaysWeatherItemModel>? {
+    return this.forecast?.forecastDay?.drop(1)?.map {
+        DaysWeatherItemModel(
+            dateTime = it.date,
+            conditionText = it.day?.condition?.text,
+            avgTemp = it.day?.avgTempC,
+            maxTemp = it.day?.maxTempC,
+            minTemp = it.day?.minTempC,
+            imageUrl = it.day?.condition?.icon
+        )
+    }
+}

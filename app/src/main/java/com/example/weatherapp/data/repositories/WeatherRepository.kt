@@ -5,7 +5,7 @@ import com.example.weatherapp.data.network.NetworkService.Companion.handleCall
 import com.example.weatherapp.data.network.WeatherApi
 import com.example.weatherapp.data.model.response.WeatherResponse
 import com.example.weatherapp.domain.mapper.toCurrentCardWeather
-import com.example.weatherapp.domain.mapper.toDaysItemWeather
+import com.example.weatherapp.domain.mapper.toDaysItemWeatherList
 import com.example.weatherapp.domain.model.DaysWeatherItemModel
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,8 +14,10 @@ import javax.inject.Singleton
 class WeatherRepository @Inject constructor(
     private val weatherApi: WeatherApi
 ) {
+
+    private val apiKey = "6183a5484fc64341bce122716231312"
+
     suspend fun getCurrentWeatherCard(
-        apiKey: String,
         cityName: String,
     ): CurrentWeatherCardModel? {
         val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
@@ -24,13 +26,11 @@ class WeatherRepository @Inject constructor(
     }
 
     suspend fun getDaysItemWeather(
-        apiKey: String,
         cityName: String,
-    ): DaysWeatherItemModel? {
-        val call = weatherApi.getWeatherForecast(apiKey, cityName, 1, "no", "no")
+    ): List<DaysWeatherItemModel>? {
+        val call = weatherApi.getWeatherForecast(apiKey, cityName, 6, "no", "no")
         val response: WeatherResponse? = handleCall(call)
-        return response?.toDaysItemWeather()
+        return response?.toDaysItemWeatherList()
     }
-
 
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/card_blue_bg"
     app:cardCornerRadius="8dp"
     app:cardElevation="0dp">
 
@@ -32,7 +33,7 @@
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/aubrey"
             android:text="Sunny"
-            android:textColor="@color/card_blue_bg"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tvDateItem"
             app:layout_constraintTop_toBottomOf="@+id/tvDateItem" />
@@ -53,11 +54,12 @@
             android:fontFamily="@font/aubrey"
             android:gravity="center"
             android:text="20°C"
-            android:textColor="@color/card_blue_bg"
+            android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imWeatherItem"
             app:layout_constraintStart_toEndOf="@+id/tvDateItem"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
