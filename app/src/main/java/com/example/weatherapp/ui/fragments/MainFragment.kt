@@ -57,7 +57,29 @@ class MainFragment : Fragment() {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
             ibSync.setOnClickListener { checkLocation() }
             ibSearch.setOnClickListener { showSearchDialog() }
-            ibCToF.setOnClickListener { Toast.makeText(requireActivity(), "Button work", Toast.LENGTH_LONG).show() }
+            ibCToF.setOnClickListener {
+                viewModel.currentWeatherFahrenheit.observe(viewLifecycleOwner) { weatherData ->
+                    tvCity.text = weatherData.nameCity
+                    tvDateTime.text = weatherData.dateTime
+                    tvCurrentTemp.text =
+                        getString(R.string.current_temp_f, weatherData.currentTemp.toString())
+                    tvCondition.text = weatherData.conditionText
+                    tvMaxMin.text = getString(
+                        R.string.max_min_temp,
+                        weatherData.maxTemp.toString(),
+                        weatherData.minTemp.toString()
+                    )
+                    Picasso.get()
+                        .load("https:" + weatherData.imageUrl)
+                        .placeholder(R.drawable.ic_test)
+                        .error(R.drawable.ic_error)
+                        .into(imWeather)
+                }
+
+                viewModel.daysListFahrenheit.observe(viewLifecycleOwner) { adapter.submitList(it) }
+
+                checkLocationFahrenheit()
+            }
         }
 
         viewModel.daysList.observe(viewLifecycleOwner) {
@@ -68,7 +90,8 @@ class MainFragment : Fragment() {
             binding.apply {
                 tvCity.text = weatherData.nameCity
                 tvDateTime.text = weatherData.dateTime
-                tvCurrentTemp.text = weatherData.currentTemp.toString()
+                tvCurrentTemp.text =
+                    getString(R.string.current_temp, weatherData.currentTemp.toString())
                 tvCondition.text = weatherData.conditionText
                 tvMaxMin.text = getString(
                     R.string.max_min_temp,
@@ -100,6 +123,16 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun checkLocationFahrenheit() {
+        if (isLocationEnabled()) {
+            getLocationFahrenheit()
+        } else {
+            DialogManager.locationSettingsDialog(requireContext()) {
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         val cancelToken = CancellationTokenSource()
@@ -111,6 +144,22 @@ class MainFragment : Fragment() {
                 result.result?.let {
                     viewModel.getCurrentWeatherCard("${it.latitude},${it.longitude}")
                     viewModel.updateDaysList("${it.latitude},${it.longitude}")
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocationFahrenheit() {
+        val cancelToken = CancellationTokenSource()
+        if (isLocationPermissionGranted()) {
+            fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                cancelToken.token
+            ).addOnCompleteListener { result ->
+                result.result?.let {
+                    viewModel.getCurrentWeatherCardFahrenheit("${it.latitude},${it.longitude}")
+                    viewModel.updateDaysListFahrenheit("${it.latitude},${it.longitude}")
                 }
             }
         }
@@ -128,7 +177,6 @@ class MainFragment : Fragment() {
 
     private fun checkPermission() {
         if (!isLocationPermissionGranted()) {
-            // Запуск запроса разрешения на использование местоположения
             permissionListener()
             pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }

@@ -39,7 +39,6 @@ class NetworkService private constructor() {
                 }
             } catch (exception: Exception) {
                 Log.e("NetworkService", "Ошибка при выполнении запроса: ${exception.localizedMessage}")
-                exception.printStackTrace()
                 null
             }
         }

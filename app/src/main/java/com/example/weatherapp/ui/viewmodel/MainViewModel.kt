@@ -24,6 +24,14 @@ class MainViewModel @Inject constructor(
     val daysList: LiveData<List<DaysWeatherItemModel>>
         get() = _daysList
 
+    private val _currentWeatherCardFahrenheit = MutableLiveData<CurrentWeatherCardModel>()
+    val currentWeatherFahrenheit: LiveData<CurrentWeatherCardModel>
+        get() = _currentWeatherCardFahrenheit
+
+    private val _daysListFahrenheit = MutableLiveData<List<DaysWeatherItemModel>>()
+    val daysListFahrenheit: LiveData<List<DaysWeatherItemModel>>
+        get() = _daysListFahrenheit
+
     fun getCurrentWeatherCard(cityName: String) {
         viewModelScope.launch {
             try {
@@ -41,7 +49,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val daysListData = repository.getDaysItemWeather(cityName)
-                Log.e("LOGGGG: ", daysListData.toString())
                 daysListData?.let {
                     _daysList.value = it
                 }
@@ -50,4 +57,31 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    fun getCurrentWeatherCardFahrenheit(cityName: String) {
+        viewModelScope.launch {
+            try {
+                val weatherData = repository.getCurrentWeatherCardFahrenheit(cityName)
+                weatherData?.let {
+                    _currentWeatherCard.value = it
+                }
+            } catch (e: Exception) {
+                e.message?.let { Log.e("LOGGGG: ", it) }
+            }
+        }
+    }
+
+    fun updateDaysListFahrenheit(cityName: String) {
+        viewModelScope.launch {
+            try {
+                val daysListData = repository.getDaysItemWeatherFahrenheit(cityName)
+                daysListData?.let {
+                    _daysList.value = it
+                }
+            } catch (e: Exception) {
+                e.message?.let { Log.e("LOGGGG: ", it) }
+            }
+        }
+    }
+
 }
