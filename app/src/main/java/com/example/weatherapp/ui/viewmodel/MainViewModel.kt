@@ -16,7 +16,6 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: WeatherRepository
 ): ViewModel() {
-    private val cityName = "Kirov-Chepetsk"
     private val _currentWeatherCard = MutableLiveData<CurrentWeatherCardModel>()
     val currentWeather: LiveData<CurrentWeatherCardModel>
         get() = _currentWeatherCard
@@ -25,7 +24,7 @@ class MainViewModel @Inject constructor(
     val daysList: LiveData<List<DaysWeatherItemModel>>
         get() = _daysList
 
-    fun getCurrentWeatherCard() {
+    fun getCurrentWeatherCard(cityName: String) {
         viewModelScope.launch {
             try {
                 val weatherData = repository.getCurrentWeatherCard(cityName)
@@ -38,7 +37,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateDaysList() {
+    fun updateDaysList(cityName: String) {
         viewModelScope.launch {
             try {
                 val daysListData = repository.getDaysItemWeather(cityName)
