@@ -24,23 +24,38 @@ class MainViewModel @Inject constructor(
     val daysList: LiveData<List<DaysWeatherItemModel>>
         get() = _daysList
 
-    private val _currentWeatherCardFahrenheit = MutableLiveData<CurrentWeatherCardModel>()
-    val currentWeatherFahrenheit: LiveData<CurrentWeatherCardModel>
-        get() = _currentWeatherCardFahrenheit
-
-    private val _daysListFahrenheit = MutableLiveData<List<DaysWeatherItemModel>>()
-    val daysListFahrenheit: LiveData<List<DaysWeatherItemModel>>
-        get() = _daysListFahrenheit
-
     fun getCurrentWeatherCard(cityName: String) {
         viewModelScope.launch {
             try {
-                val weatherData = repository.getCurrentWeatherCard(cityName)
-                weatherData?.let {
+                val weatherCurrentCard = repository.getCurrentWeatherCard(cityName)
+                weatherCurrentCard?.let {
                     _currentWeatherCard.value = it
                 }
             } catch (e: Exception) {
                 e.message?.let { Log.e("LOGGGG: ", it) }
+            }
+        }
+    }
+
+    fun getCurrentWeatherCardFahrenheit(cityName: String) {
+        viewModelScope.launch {
+            try {
+                val weatherCurrentCard = repository.getCurrentWeatherCard(cityName)
+                val currentTemp = _currentWeatherCard.value?.currentTemp
+                val maxTemp = _currentWeatherCard.value?.maxTemp
+                val minTemp = _currentWeatherCard.value?.minTemp
+                val convertCToFCurrentTemp = convertCelsiusToFahrenheit(currentTemp)
+                val convertCToFMaxTemp = convertCelsiusToFahrenheit(maxTemp)
+                val convertCToFMinTemp = convertCelsiusToFahrenheit(minTemp)
+                weatherCurrentCard?.let {
+                    _currentWeatherCard.value = it.copy(
+                        currentTemp = convertCToFCurrentTemp,
+                        maxTemp = convertCToFMaxTemp,
+                        minTemp = convertCToFMinTemp
+                    )
+                }
+            } catch (e: Exception) {
+                e.message?.let { Log.e("Error", it) }
             }
         }
     }
@@ -58,30 +73,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentWeatherCardFahrenheit(cityName: String) {
-        viewModelScope.launch {
-            try {
-                val weatherData = repository.getCurrentWeatherCardFahrenheit(cityName)
-                weatherData?.let {
-                    _currentWeatherCard.value = it
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("LOGGGG: ", it) }
-            }
-        }
-    }
-
     fun updateDaysListFahrenheit(cityName: String) {
         viewModelScope.launch {
             try {
-                val daysListData = repository.getDaysItemWeatherFahrenheit(cityName)
-                daysListData?.let {
-                    _daysList.value = it
+                val daysList = repository.getDaysItemWeather(cityName)
+                val maxTemp = _daysList.value?.get(0)?.maxTemp
+                val minTemp = _daysList.value?.get(0)?.minTemp
+                val convertCToFMaxTemp = convertCelsiusToFahrenheit(maxTemp)
+                val convertCToFMinTemp = convertCelsiusToFahrenheit(minTemp)
+                daysList?.let {
+                    _daysList.value = it.map { day ->
+                        day.copy(
+                            maxTemp = convertCToFMaxTemp,
+                            minTemp = convertCToFMinTemp
+                        )
+                    }
                 }
             } catch (e: Exception) {
-                e.message?.let { Log.e("LOGGGG: ", it) }
+                e.message?.let { Log.e("Error", it) }
             }
         }
     }
 
+
+
+    private fun convertCelsiusToFahrenheit(celsius: Float?): Float? {
+        if (celsius == null) return null
+        return (celsius * 9 / 5) + 32
+//        return "%.1f".format((celsius * 9 / 5) + 32).toFloat()
+    }
 }

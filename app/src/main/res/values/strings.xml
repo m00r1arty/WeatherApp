@@ -3,6 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">F1</string>
     <string name="max_min_temp">%1$s°C/%2$s°C</string>
+    <string name="max_min_temp_f">%1$s°F/%2$s°F</string>
     <string name="current_temp">%1$s°C</string>
     <string name="current_temp_f">%1$s°F</string>
+    <string name="celsius_to_fahrenheit_converted">Celsius to Fahrenheit converted</string>
+    <string name="https">https:</string>
 </resources>

@@ -37,6 +37,7 @@ class MainFragment : Fragment() {
     private lateinit var adapter: DaysAdapter
     private lateinit var binding: FragmentMainBinding
     private val viewModel: MainViewModel by activityViewModels()
+    private var isButtonCToFPressed = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +49,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         checkPermission()
 
         binding.apply {
@@ -55,30 +57,19 @@ class MainFragment : Fragment() {
             adapter = DaysAdapter()
             daysRecycler.adapter = adapter
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-            ibSync.setOnClickListener { checkLocation() }
-            ibSearch.setOnClickListener { showSearchDialog() }
+            ibSync.setOnClickListener { checkLocation(); isButtonCToFPressed = false }
+            ibSearch.setOnClickListener { showSearchDialog(); isButtonCToFPressed = false }
             ibCToF.setOnClickListener {
-                viewModel.currentWeatherFahrenheit.observe(viewLifecycleOwner) { weatherData ->
-                    tvCity.text = weatherData.nameCity
-                    tvDateTime.text = weatherData.dateTime
-                    tvCurrentTemp.text =
-                        getString(R.string.current_temp_f, weatherData.currentTemp.toString())
-                    tvCondition.text = weatherData.conditionText
-                    tvMaxMin.text = getString(
-                        R.string.max_min_temp,
-                        weatherData.maxTemp.toString(),
-                        weatherData.minTemp.toString()
-                    )
-                    Picasso.get()
-                        .load("https:" + weatherData.imageUrl)
-                        .placeholder(R.drawable.ic_test)
-                        .error(R.drawable.ic_error)
-                        .into(imWeather)
+                if (isButtonCToFPressed) {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.celsius_to_fahrenheit_converted),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    checkLocation(isFahrenheit = true)
+                    isButtonCToFPressed = true
                 }
-
-                viewModel.daysListFahrenheit.observe(viewLifecycleOwner) { adapter.submitList(it) }
-
-                checkLocationFahrenheit()
             }
         }
 
@@ -90,22 +81,23 @@ class MainFragment : Fragment() {
             binding.apply {
                 tvCity.text = weatherData.nameCity
                 tvDateTime.text = weatherData.dateTime
-                tvCurrentTemp.text =
-                    getString(R.string.current_temp, weatherData.currentTemp.toString())
+                tvCurrentTemp.text =getString(
+                    if (isButtonCToFPressed) R.string.current_temp_f else R.string.current_temp,
+                    weatherData.currentTemp
+                )
                 tvCondition.text = weatherData.conditionText
                 tvMaxMin.text = getString(
-                    R.string.max_min_temp,
-                    weatherData.maxTemp.toString(),
-                    weatherData.minTemp.toString()
+                    if (isButtonCToFPressed) R.string.max_min_temp_f else R.string.max_min_temp,
+                    weatherData.maxTemp,
+                    weatherData.minTemp
                 )
                 Picasso.get()
-                    .load("https:" + weatherData.imageUrl)
+                    .load(getString(R.string.https) + weatherData.imageUrl)
                     .placeholder(R.drawable.ic_test)
                     .error(R.drawable.ic_error)
                     .into(imWeather)
             }
         }
-
     }
 
     override fun onResume() {
@@ -113,9 +105,9 @@ class MainFragment : Fragment() {
         checkLocation()
     }
 
-    private fun checkLocation() {
+    private fun checkLocation(isFahrenheit: Boolean = false) {
         if (isLocationEnabled()) {
-            getLocation()
+            getLocation(isFahrenheit)
         } else {
             DialogManager.locationSettingsDialog(requireContext()) {
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
@@ -123,43 +115,21 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun checkLocationFahrenheit() {
-        if (isLocationEnabled()) {
-            getLocationFahrenheit()
-        } else {
-            DialogManager.locationSettingsDialog(requireContext()) {
-                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            }
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
+    @SuppressLint("MissingPermission") // Added because without this annotation AS show error but project works correctly
+    private fun getLocation(isFahrenheit: Boolean = false) {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
             fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 cancelToken.token
-            ).addOnCompleteListener { result ->
-                result.result?.let {
-                    viewModel.getCurrentWeatherCard("${it.latitude},${it.longitude}")
-                    viewModel.updateDaysList("${it.latitude},${it.longitude}")
-                }
-            }
-        }
-    }
+            ).addOnCompleteListener {
+                it.result?.let { location ->
+                    val locationString = "${location.latitude},${location.longitude}"
+                    val currentWeather = if (isFahrenheit) viewModel::getCurrentWeatherCardFahrenheit else viewModel::getCurrentWeatherCard
+                    val updateDaysList = if (isFahrenheit) viewModel::updateDaysListFahrenheit else viewModel::updateDaysList
 
-    @SuppressLint("MissingPermission")
-    private fun getLocationFahrenheit() {
-        val cancelToken = CancellationTokenSource()
-        if (isLocationPermissionGranted()) {
-            fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                cancelToken.token
-            ).addOnCompleteListener { result ->
-                result.result?.let {
-                    viewModel.getCurrentWeatherCardFahrenheit("${it.latitude},${it.longitude}")
-                    viewModel.updateDaysListFahrenheit("${it.latitude},${it.longitude}")
+                    currentWeather(locationString)
+                    updateDaysList(locationString)
                 }
             }
         }
