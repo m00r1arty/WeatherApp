@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
@@ -37,7 +38,7 @@ class MainFragment : Fragment() {
     private lateinit var adapter: DaysAdapter
     private lateinit var binding: FragmentMainBinding
     private val viewModel: MainViewModel by activityViewModels()
-    private var isButtonCToFPressed = false
+    private var isFahrenheit = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,18 +58,18 @@ class MainFragment : Fragment() {
             adapter = DaysAdapter()
             daysRecycler.adapter = adapter
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-            ibSync.setOnClickListener { checkLocation(); isButtonCToFPressed = false }
-            ibSearch.setOnClickListener { showSearchDialog(); isButtonCToFPressed = false }
+            ibSync.setOnClickListener { checkLocation(); isFahrenheit = false }
+            ibSearch.setOnClickListener { showSearchDialog(); isFahrenheit = false }
             ibCToF.setOnClickListener {
-                if (isButtonCToFPressed) {
+                if (isFahrenheit) {
                     Toast.makeText(
                         context,
                         getString(R.string.celsius_to_fahrenheit_converted),
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    checkLocation(isFahrenheit = true)
-                    isButtonCToFPressed = true
+                    checkLocation()
+                    isFahrenheit = true
                 }
             }
         }
@@ -81,13 +82,13 @@ class MainFragment : Fragment() {
             binding.apply {
                 tvCity.text = weatherData.nameCity
                 tvDateTime.text = weatherData.dateTime
-                tvCurrentTemp.text =getString(
-                    if (isButtonCToFPressed) R.string.current_temp_f else R.string.current_temp,
+                tvCurrentTemp.text = getString(
+                    if (isFahrenheit) R.string.current_temp_f else R.string.current_temp,
                     weatherData.currentTemp
                 )
                 tvCondition.text = weatherData.conditionText
                 tvMaxMin.text = getString(
-                    if (isButtonCToFPressed) R.string.max_min_temp_f else R.string.max_min_temp,
+                    if (isFahrenheit) R.string.max_min_temp_f else R.string.max_min_temp,
                     weatherData.maxTemp,
                     weatherData.minTemp
                 )
@@ -105,9 +106,9 @@ class MainFragment : Fragment() {
         checkLocation()
     }
 
-    private fun checkLocation(isFahrenheit: Boolean = false) {
+    private fun checkLocation() {
         if (isLocationEnabled()) {
-            getLocation(isFahrenheit)
+            getLocation()
         } else {
             DialogManager.locationSettingsDialog(requireContext()) {
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
@@ -116,7 +117,7 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("MissingPermission") // Added because without this annotation AS show error but project works correctly
-    private fun getLocation(isFahrenheit: Boolean = false) {
+    private fun getLocation() {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
             fusedLocationClient.getCurrentLocation(
@@ -124,15 +125,16 @@ class MainFragment : Fragment() {
                 cancelToken.token
             ).addOnCompleteListener {
                 it.result?.let { location ->
-                    val locationString = "${location.latitude},${location.longitude}"
-                    val currentWeather = if (isFahrenheit) viewModel::getCurrentWeatherCardFahrenheit else viewModel::getCurrentWeatherCard
-                    val updateDaysList = if (isFahrenheit) viewModel::updateDaysListFahrenheit else viewModel::updateDaysList
-
-                    currentWeather(locationString)
-                    updateDaysList(locationString)
+                    handleLocationResult(location)
                 }
             }
         }
+    }
+
+    private fun handleLocationResult(location: Location) {
+        val locationString = "${location.latitude},${location.longitude}"
+        viewModel.getCurrentWeatherCard(locationString, isFahrenheit)
+        viewModel.updateDaysList(locationString, isFahrenheit)
     }
 
     private fun isLocationPermissionGranted() =

@@ -11,6 +11,7 @@ import com.example.weatherapp.domain.model.DaysWeatherItemModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.floor
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -24,69 +25,23 @@ class MainViewModel @Inject constructor(
     val daysList: LiveData<List<DaysWeatherItemModel>>
         get() = _daysList
 
-    fun getCurrentWeatherCard(cityName: String) {
+    fun getCurrentWeatherCard(cityName: String, isFahrenheit: Boolean = false) {
         viewModelScope.launch {
             try {
                 val weatherCurrentCard = repository.getCurrentWeatherCard(cityName)
                 weatherCurrentCard?.let {
-                    _currentWeatherCard.value = it
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("LOGGGG: ", it) }
-            }
-        }
-    }
+                    if (isFahrenheit) {
+                        val currentTemp = convertCelsiusToFahrenheit(it.currentTemp)
+                        val maxTemp = convertCelsiusToFahrenheit(it.maxTemp)
+                        val minTemp = convertCelsiusToFahrenheit(it.minTemp)
 
-    fun getCurrentWeatherCardFahrenheit(cityName: String) {
-        viewModelScope.launch {
-            try {
-                val weatherCurrentCard = repository.getCurrentWeatherCard(cityName)
-                val currentTemp = _currentWeatherCard.value?.currentTemp
-                val maxTemp = _currentWeatherCard.value?.maxTemp
-                val minTemp = _currentWeatherCard.value?.minTemp
-                val convertCToFCurrentTemp = convertCelsiusToFahrenheit(currentTemp)
-                val convertCToFMaxTemp = convertCelsiusToFahrenheit(maxTemp)
-                val convertCToFMinTemp = convertCelsiusToFahrenheit(minTemp)
-                weatherCurrentCard?.let {
-                    _currentWeatherCard.value = it.copy(
-                        currentTemp = convertCToFCurrentTemp,
-                        maxTemp = convertCToFMaxTemp,
-                        minTemp = convertCToFMinTemp
-                    )
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("Error", it) }
-            }
-        }
-    }
-
-    fun updateDaysList(cityName: String) {
-        viewModelScope.launch {
-            try {
-                val daysListData = repository.getDaysItemWeather(cityName)
-                daysListData?.let {
-                    _daysList.value = it
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("LOGGGG: ", it) }
-            }
-        }
-    }
-
-    fun updateDaysListFahrenheit(cityName: String) {
-        viewModelScope.launch {
-            try {
-                val daysList = repository.getDaysItemWeather(cityName)
-                val maxTemp = _daysList.value?.get(0)?.maxTemp
-                val minTemp = _daysList.value?.get(0)?.minTemp
-                val convertCToFMaxTemp = convertCelsiusToFahrenheit(maxTemp)
-                val convertCToFMinTemp = convertCelsiusToFahrenheit(minTemp)
-                daysList?.let {
-                    _daysList.value = it.map { day ->
-                        day.copy(
-                            maxTemp = convertCToFMaxTemp,
-                            minTemp = convertCToFMinTemp
+                        _currentWeatherCard.value = it.copy(
+                            currentTemp = currentTemp,
+                            maxTemp = maxTemp,
+                            minTemp = minTemp
                         )
+                    } else {
+                        _currentWeatherCard.value = it
                     }
                 }
             } catch (e: Exception) {
@@ -95,11 +50,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateDaysList(cityName: String, isFahrenheit: Boolean = false) {
+        viewModelScope.launch {
+            try {
+                val daysListData = repository.getDaysItemWeather(cityName)
+                daysListData?.let {
+                    if (isFahrenheit) {
+                        val convertedList = it.map { day ->
+                            day.copy(
+                                maxTemp = convertCelsiusToFahrenheit(day.maxTemp),
+                                minTemp = convertCelsiusToFahrenheit(day.minTemp)
+                            )
+                        }
+                        _daysList.value = convertedList
+                    } else {
+                        _daysList.value = it
+                    }
+                }
+            } catch (e: Exception) {
+                e.message?.let { Log.e("LOGGGG: ", it) }
+            }
+        }
+    }
 
 
     private fun convertCelsiusToFahrenheit(celsius: Float?): Float? {
         if (celsius == null) return null
-        return (celsius * 9 / 5) + 32
+        return floor((celsius * 9 / 5) + 32)
 //        return "%.1f".format((celsius * 9 / 5) + 32).toFloat()
     }
 }
