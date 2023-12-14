@@ -1,9 +1,9 @@
 package com.example.weatherapp.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.data.repositories.WeatherRepository
 import com.example.weatherapp.domain.model.CurrentWeatherCardModel
@@ -17,66 +17,48 @@ import kotlin.math.floor
 class MainViewModel @Inject constructor(
     private val repository: WeatherRepository
 ): ViewModel() {
+    var isFahrenheit = false
+
     private val _currentWeatherCard = MutableLiveData<CurrentWeatherCardModel>()
-    val currentWeather: LiveData<CurrentWeatherCardModel>
-        get() = _currentWeatherCard
+    val currentWeather: LiveData<CurrentWeatherCardModel> =_currentWeatherCard.map { weather ->
+        if (isFahrenheit) {
+            weather.copy(
+                currentTemp = convertCelsiusToFahrenheit(weather.currentTemp),
+                maxTemp = convertCelsiusToFahrenheit(weather.maxTemp),
+                minTemp = convertCelsiusToFahrenheit(weather.minTemp)
+            )
+        } else {
+            weather
+        }
+    }
 
     private val _daysList = MutableLiveData<List<DaysWeatherItemModel>>()
-    val daysList: LiveData<List<DaysWeatherItemModel>>
-        get() = _daysList
-
-    fun getCurrentWeatherCard(cityName: String, isFahrenheit: Boolean = false) {
-        viewModelScope.launch {
-            try {
-                val weatherCurrentCard = repository.getCurrentWeatherCard(cityName)
-                weatherCurrentCard?.let {
-                    if (isFahrenheit) {
-                        val currentTemp = convertCelsiusToFahrenheit(it.currentTemp)
-                        val maxTemp = convertCelsiusToFahrenheit(it.maxTemp)
-                        val minTemp = convertCelsiusToFahrenheit(it.minTemp)
-
-                        _currentWeatherCard.value = it.copy(
-                            currentTemp = currentTemp,
-                            maxTemp = maxTemp,
-                            minTemp = minTemp
-                        )
-                    } else {
-                        _currentWeatherCard.value = it
-                    }
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("Error", it) }
+    val daysList = _daysList.map { list ->
+        list.map { item ->
+            if (isFahrenheit) {
+                item.copy(
+                    maxTemp = convertCelsiusToFahrenheit(item.maxTemp),
+                    minTemp = convertCelsiusToFahrenheit(item.minTemp)
+                )
+            } else {
+                item
             }
         }
     }
 
-    fun updateDaysList(cityName: String, isFahrenheit: Boolean = false) {
-        viewModelScope.launch {
-            try {
-                val daysListData = repository.getDaysItemWeather(cityName)
-                daysListData?.let {
-                    if (isFahrenheit) {
-                        val convertedList = it.map { day ->
-                            day.copy(
-                                maxTemp = convertCelsiusToFahrenheit(day.maxTemp),
-                                minTemp = convertCelsiusToFahrenheit(day.minTemp)
-                            )
-                        }
-                        _daysList.value = convertedList
-                    } else {
-                        _daysList.value = it
-                    }
-                }
-            } catch (e: Exception) {
-                e.message?.let { Log.e("LOGGGG: ", it) }
-            }
+    fun updateWeather(location: String) = viewModelScope.launch {
+        repository.getCurrentWeatherCard(location)?.let {
+            _currentWeatherCard.value = it
         }
+        _daysList.value = repository.getDaysItemWeather(location)
     }
-
+    fun invalidateData() {
+        _daysList.value = _daysList.value
+        _currentWeatherCard.value = _currentWeatherCard.value
+    }
 
     private fun convertCelsiusToFahrenheit(celsius: Float?): Float? {
         if (celsius == null) return null
         return floor((celsius * 9 / 5) + 32)
-//        return "%.1f".format((celsius * 9 / 5) + 32).toFloat()
     }
 }

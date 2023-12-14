@@ -25,10 +25,10 @@ class WeatherRepository @Inject constructor(
 
     suspend fun getDaysItemWeather(
         cityName: String,
-    ): List<DaysWeatherItemModel>? {
+    ): List<DaysWeatherItemModel> {
         val call = weatherApi.getWeatherForecast(API_KEY, cityName, 6, AQI, ALERTS)
         val response: WeatherResponse? = handleCall(call)
-        return response?.toDaysItemWeatherList()
+        return response.toDaysItemWeatherList()
     }
 
     companion object {

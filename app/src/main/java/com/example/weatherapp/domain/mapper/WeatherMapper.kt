@@ -6,17 +6,17 @@ import com.example.weatherapp.data.model.response.WeatherResponse
 import kotlin.math.floor
 
 fun WeatherResponse.toCurrentCardWeather() = CurrentWeatherCardModel(
-    nameCity = this.location?.name,
-    dateTime = this.location?.localtime,
-    conditionText = this.current?.condition?.text,
-    currentTemp = this.current?.tempC?.let { it1 -> floor(it1) },
-    maxTemp = this.forecast?.forecastDay?.first()?.day?.maxTempC?.let { it1 -> floor(it1) },
-    minTemp = this.forecast?.forecastDay?.first()?.day?.minTempC?.let { it1 -> floor(it1) },
-    imageUrl = this.current?.condition?.icon
+    nameCity = location?.name,
+    dateTime = location?.localtime,
+    conditionText = current?.condition?.text,
+    currentTemp = current?.tempC?.let { it1 -> floor(it1) },
+    maxTemp = forecast?.forecastDay?.first()?.day?.maxTempC?.let { it1 -> floor(it1) },
+    minTemp = forecast?.forecastDay?.first()?.day?.minTempC?.let { it1 -> floor(it1) },
+    imageUrl = current?.condition?.icon
 )
 
-fun WeatherResponse.toDaysItemWeatherList(): List<DaysWeatherItemModel>? {
-    return this.forecast?.forecastDay?.drop(1)?.map {
+fun WeatherResponse?.toDaysItemWeatherList(): List<DaysWeatherItemModel> {
+    return this?.forecast?.forecastDay?.drop(1)?.map {
         DaysWeatherItemModel(
             dateTime = it.date,
             conditionText = it.day?.condition?.text,
@@ -24,6 +24,6 @@ fun WeatherResponse.toDaysItemWeatherList(): List<DaysWeatherItemModel>? {
             minTemp = it.day?.minTempC?.let { it1 -> floor(it1) },
             imageUrl = it.day?.condition?.icon
         )
-    }
+    } ?: emptyList()
 }
 

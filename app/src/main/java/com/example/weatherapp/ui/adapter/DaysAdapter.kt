@@ -26,15 +26,20 @@ class DaysAdapter: ListAdapter<DaysWeatherItemModel, DaysAdapter.Holder>(Compara
 
         fun bind(daysWeather: DaysWeatherItemModel) {
             binding.apply {
-                tvDateItem.text = daysWeather.dateTime
-                tvConditionItem.text = daysWeather.conditionText
-                tvTempItem.text = "${daysWeather.maxTemp}°C/${daysWeather.minTemp}°C"
+                date.text = daysWeather.dateTime
+                condition.text = daysWeather.conditionText
+                val weatherText = root.context.getString(
+                    R.string.max_min_temp,
+                    daysWeather.maxTemp.toString(),
+                    daysWeather.minTemp.toString()
+                )
+                temp.text = weatherText
 
                 Picasso.get()
-                    .load("https:" + daysWeather.imageUrl)
+                    .load(root.context.getString(R.string.https) + daysWeather.imageUrl)
                     .placeholder(R.drawable.ic_test)
                     .error(R.drawable.ic_error)
-                    .into(imWeatherItem)
+                    .into(weatherIcon)
             }
         }
 

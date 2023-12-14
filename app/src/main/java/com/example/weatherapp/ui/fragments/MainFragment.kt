@@ -33,12 +33,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
-    private lateinit var pLauncher: ActivityResultLauncher<String>
+    private lateinit var resultLauncher: ActivityResultLauncher<String>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var adapter: DaysAdapter
     private lateinit var binding: FragmentMainBinding
+    private val adapter = DaysAdapter()
     private val viewModel: MainViewModel by activityViewModels()
-    private var isFahrenheit = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,25 +51,16 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         checkPermission()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.apply {
             daysRecycler.layoutManager = LinearLayoutManager(activity)
-            adapter = DaysAdapter()
             daysRecycler.adapter = adapter
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-            ibSync.setOnClickListener { checkLocation(); isFahrenheit = false }
-            ibSearch.setOnClickListener { showSearchDialog(); isFahrenheit = false }
+            syncButton.setOnClickListener { checkLocation() }
+            searchButton.setOnClickListener { showSearchDialog() }
             ibCToF.setOnClickListener {
-                if (isFahrenheit) {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.celsius_to_fahrenheit_converted),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    checkLocation()
-                    isFahrenheit = true
-                }
+                viewModel.isFahrenheit = !viewModel.isFahrenheit
+                viewModel.invalidateData()
             }
         }
 
@@ -83,12 +73,12 @@ class MainFragment : Fragment() {
                 tvCity.text = weatherData.nameCity
                 tvDateTime.text = weatherData.dateTime
                 tvCurrentTemp.text = getString(
-                    if (isFahrenheit) R.string.current_temp_f else R.string.current_temp,
+                    if (viewModel.isFahrenheit) R.string.current_temp_f else R.string.current_temp,
                     weatherData.currentTemp
                 )
                 tvCondition.text = weatherData.conditionText
                 tvMaxMin.text = getString(
-                    if (isFahrenheit) R.string.max_min_temp_f else R.string.max_min_temp,
+                    if (viewModel.isFahrenheit) R.string.max_min_temp_f else R.string.max_min_temp,
                     weatherData.maxTemp,
                     weatherData.minTemp
                 )
@@ -108,7 +98,9 @@ class MainFragment : Fragment() {
 
     private fun checkLocation() {
         if (isLocationEnabled()) {
-            getLocation()
+            requireLocation { location ->
+                handleLocationResult(location)
+            }
         } else {
             DialogManager.locationSettingsDialog(requireContext()) {
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
@@ -117,24 +109,21 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("MissingPermission") // Added because without this annotation AS show error but project works correctly
-    private fun getLocation() {
+    private fun requireLocation(onComplete: (Location) -> Unit = {}) {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
             fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 cancelToken.token
             ).addOnCompleteListener {
-                it.result?.let { location ->
-                    handleLocationResult(location)
-                }
+                onComplete(it.result)
             }
         }
     }
 
     private fun handleLocationResult(location: Location) {
         val locationString = "${location.latitude},${location.longitude}"
-        viewModel.getCurrentWeatherCard(locationString, isFahrenheit)
-        viewModel.updateDaysList(locationString, isFahrenheit)
+        viewModel.updateWeather(locationString)
     }
 
     private fun isLocationPermissionGranted() =
@@ -150,12 +139,12 @@ class MainFragment : Fragment() {
     private fun checkPermission() {
         if (!isLocationPermissionGranted()) {
             permissionListener()
-            pLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            resultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
     private fun permissionListener() {
-        pLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        resultLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             val message = if (isGranted) "Permission granted!" else "Permission denied"
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
         }
@@ -164,8 +153,7 @@ class MainFragment : Fragment() {
     private fun showSearchDialog() {
         DialogManager.searchByNameDialog(requireContext()) { name ->
             name?.let { nameCity ->
-                viewModel.getCurrentWeatherCard(nameCity)
-                viewModel.updateDaysList(nameCity)
+                viewModel.updateWeather(nameCity)
             }
         }
     }
