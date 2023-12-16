@@ -36,8 +36,8 @@ class MainFragment : Fragment() {
     private lateinit var resultLauncher: ActivityResultLauncher<String>
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var binding: FragmentMainBinding
-    private val adapter = DaysAdapter()
     private val viewModel: MainViewModel by activityViewModels()
+    private lateinit var adapter: DaysAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,15 +50,17 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        checkPermission()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        adapter = DaysAdapter(viewModel)
+
+        checkPermission()
 
         binding.apply {
             daysRecycler.layoutManager = LinearLayoutManager(activity)
             daysRecycler.adapter = adapter
             syncButton.setOnClickListener { checkLocation() }
             searchButton.setOnClickListener { showSearchDialog() }
-            ibCToF.setOnClickListener {
+            buttonCelciusToFahrenheit.setOnClickListener {
                 viewModel.isFahrenheit = !viewModel.isFahrenheit
                 viewModel.invalidateData()
             }

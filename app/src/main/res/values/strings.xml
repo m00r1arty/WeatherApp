@@ -7,4 +7,9 @@
     <string name="current_temp">%1$s°C</string>
     <string name="current_temp_f">%1$s°F</string>
     <string name="https">https:</string>
+    <string name="city_name">City name:</string>
+    <string name="enable_location">Enable location?</string>
+    <string name="location_disabled">"Location disabled. Do you want to enable location?"</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>

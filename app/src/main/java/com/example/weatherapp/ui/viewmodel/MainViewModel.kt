@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
     }
 
     private val _daysList = MutableLiveData<List<DaysWeatherItemModel>>()
-    val daysList = _daysList.map { list ->
+    val daysList = _daysList.map { list  ->
         list.map { item ->
             if (isFahrenheit) {
                 item.copy(
@@ -47,8 +47,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateWeather(location: String) = viewModelScope.launch {
-        repository.getCurrentWeatherCard(location)?.let {
-            _currentWeatherCard.value = it
+        repository.getCurrentWeatherCard(location)?.let { item ->
+            _currentWeatherCard.value = item
         }
         _daysList.value = repository.getDaysItemWeather(location)
     }

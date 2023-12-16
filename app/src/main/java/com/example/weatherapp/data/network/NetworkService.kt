@@ -38,7 +38,8 @@ class NetworkService private constructor() {
                     throw IllegalArgumentException("Api returns nothing")
                 }
             } catch (exception: Exception) {
-                Log.e("NetworkService", "Ошибка при выполнении запроса: ${exception.localizedMessage}")
+                val message = "Error executing the request: ${exception.localizedMessage}"
+                Log.e("NetworkService", message)
                 null
             }
         }

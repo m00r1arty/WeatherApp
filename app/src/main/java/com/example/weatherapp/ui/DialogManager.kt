@@ -3,6 +3,7 @@ package com.example.weatherapp.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.widget.EditText
+import com.example.weatherapp.R
 
 object DialogManager {
 
@@ -14,8 +15,8 @@ object DialogManager {
      */
     fun locationSettingsDialog(context: Context, onClick: (String?) -> Unit) {
         AlertDialog.Builder(context)
-            .setTitle("Enable location?")
-            .setMessage("Location disabled. Do you want to enable location?")
+            .setTitle(context.getString(R.string.enable_location))
+            .setMessage(context.getString(R.string.location_disabled))
             .setPositiveButton("Ок") { _, _ ->
                 // Уведомляет слушателя при нажатии пользователем "Ок" для включения местоположения.
                 onClick(null)
@@ -34,12 +35,12 @@ object DialogManager {
         val editName = EditText(context)
         AlertDialog.Builder(context)
             .setView(editName)
-            .setTitle("City name:")
-            .setPositiveButton("Ok") { _, _ ->
+            .setTitle(context.getString(R.string.city_name))
+            .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
                 // Уведомляет слушателя с введенным именем города при нажатии пользователем "Ок".
                 onClick(editName.text.toString())
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 }
