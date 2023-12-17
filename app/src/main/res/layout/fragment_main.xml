@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tvCity"
+                android:id="@+id/cityTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvDateTime"
+                android:id="@+id/dateTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -46,14 +46,14 @@
                 android:text="15.11.2023 13:00"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/imWeather"
+                app:layout_constraintBottom_toTopOf="@+id/weatherIcon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imWeather"
+                app:layout_constraintStart_toEndOf="@+id/weatherIcon"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
-                android:id="@+id/imWeather"
+                android:id="@+id/weatherIcon"
                 android:layout_width="112dp"
                 android:layout_height="112dp"
                 android:layout_marginTop="4dp"
@@ -61,11 +61,11 @@
                 android:src="@drawable/ic_test"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCity" />
+                app:layout_constraintTop_toBottomOf="@+id/cityTextView" />
 
 
             <TextView
-                android:id="@+id/tvCurrentTemp"
+                android:id="@+id/currentTempTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -74,12 +74,12 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imWeather"
+                app:layout_constraintTop_toBottomOf="@+id/weatherIcon"
                 tools:ignore="MissingConstraints"
                 tools:text="0°C" />
 
             <TextView
-                android:id="@+id/tvCondition"
+                android:id="@+id/conditionTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -88,10 +88,10 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCurrentTemp" />
+                app:layout_constraintTop_toBottomOf="@+id/currentTempTextView" />
 
             <TextView
-                android:id="@+id/tvMaxMin"
+                android:id="@+id/maxMinTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0°C/-1°C"
@@ -99,7 +99,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/syncButton"
                 app:layout_constraintStart_toEndOf="@+id/searchButton"
-                app:layout_constraintTop_toBottomOf="@+id/tvCondition" />
+                app:layout_constraintTop_toBottomOf="@+id/conditionTextView" />
 
             <ImageButton
                 android:id="@+id/searchButton"
@@ -113,7 +113,7 @@
                 android:src="@drawable/ic_search"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCondition" />
+                app:layout_constraintTop_toBottomOf="@+id/conditionTextView" />
 
             <ImageButton
                 android:id="@+id/syncButton"
@@ -149,7 +149,7 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/buttonCelciusToFahrenheit"
+                android:id="@+id/celciusToFahrenheitButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"

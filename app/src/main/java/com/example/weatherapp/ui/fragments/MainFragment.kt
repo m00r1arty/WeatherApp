@@ -60,7 +60,7 @@ class MainFragment : Fragment() {
             daysRecycler.adapter = adapter
             syncButton.setOnClickListener { checkLocation() }
             searchButton.setOnClickListener { showSearchDialog() }
-            buttonCelciusToFahrenheit.setOnClickListener {
+            celciusToFahrenheitButton.setOnClickListener {
                 viewModel.isFahrenheit = !viewModel.isFahrenheit
                 viewModel.invalidateData()
             }
@@ -72,14 +72,14 @@ class MainFragment : Fragment() {
 
         viewModel.currentWeather.observe(viewLifecycleOwner) { weatherData ->
             binding.apply {
-                tvCity.text = weatherData.nameCity
-                tvDateTime.text = weatherData.dateTime
-                tvCurrentTemp.text = getString(
+                cityTextView.text = weatherData.nameCity
+                dateTimeTextView.text = weatherData.dateTime
+                currentTempTextView.text = getString(
                     if (viewModel.isFahrenheit) R.string.current_temp_f else R.string.current_temp,
                     weatherData.currentTemp
                 )
-                tvCondition.text = weatherData.conditionText
-                tvMaxMin.text = getString(
+                conditionTextView.text = weatherData.conditionText
+                maxMinTextView.text = getString(
                     if (viewModel.isFahrenheit) R.string.max_min_temp_f else R.string.max_min_temp,
                     weatherData.maxTemp,
                     weatherData.minTemp
@@ -88,7 +88,7 @@ class MainFragment : Fragment() {
                     .load(getString(R.string.https) + weatherData.imageUrl)
                     .placeholder(R.drawable.ic_test)
                     .error(R.drawable.ic_error)
-                    .into(imWeather)
+                    .into(weatherIcon)
             }
         }
     }
@@ -101,7 +101,7 @@ class MainFragment : Fragment() {
     private fun checkLocation() {
         if (isLocationEnabled()) {
             requireLocation { location ->
-                handleLocationResult(location)
+                location?.let { handleLocationResult(it) }
             }
         } else {
             DialogManager.locationSettingsDialog(requireContext()) {
@@ -110,8 +110,12 @@ class MainFragment : Fragment() {
         }
     }
 
-    @SuppressLint("MissingPermission") // Added because without this annotation AS show error but project works correctly
-    private fun requireLocation(onComplete: (Location) -> Unit = {}) {
+    /**
+     * Added because without this annotation AS show error,
+     * but project works correctly
+    **/
+    @SuppressLint("MissingPermission")
+    private fun requireLocation(onComplete: (Location?) -> Unit = {}) {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
             fusedLocationClient.getCurrentLocation(

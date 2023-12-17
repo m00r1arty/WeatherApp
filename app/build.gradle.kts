@@ -17,6 +17,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "org.mockito.junit.MockitoJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -66,17 +67,20 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
 
     // Зависимость для JUnit
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
     testImplementation("junit:junit:4.13.2")
 
     // Зависимость для Mockito
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-
-    // Зависимость для mockk
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-inline:2.13.0")
     testImplementation("io.mockk:mockk:1.12.0")
 
-    // Если вы используете AndroidX Test для интеграции с Android-компонентами
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+
 }
 
 kapt {
