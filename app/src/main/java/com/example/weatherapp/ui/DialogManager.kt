@@ -17,11 +17,10 @@ object DialogManager {
         AlertDialog.Builder(context)
             .setTitle(context.getString(R.string.enable_location))
             .setMessage(context.getString(R.string.location_disabled))
-            .setPositiveButton("Ок") { _, _ ->
-                // Уведомляет слушателя при нажатии пользователем "Ок" для включения местоположения.
+            .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
                 onClick(null)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(context.getString(R.string.cancel), null)
             .show()
     }
 
@@ -37,7 +36,6 @@ object DialogManager {
             .setView(editName)
             .setTitle(context.getString(R.string.city_name))
             .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
-                // Уведомляет слушателя с введенным именем города при нажатии пользователем "Ок".
                 onClick(editName.text.toString())
             }
             .setNegativeButton(context.getString(R.string.cancel), null)

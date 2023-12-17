@@ -35,12 +35,12 @@ class WeatherRepositoryTest {
     @Test
     fun getCurrentWeatherCardSuccessTest() = runTest {
 
-        whenever(weatherApi.getWeatherForecast("6183a5484fc64341bce122716231312", "London", 1, "no", "no"))
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS))
             .thenReturn(mockCall)
 
         whenever(mockCall.execute()).thenReturn(Response.success(WeatherResponse()))
 
-        val result = weatherRepository.getCurrentWeatherCard("London")
+        val result = weatherRepository.getCurrentWeatherCard(CITY)
 
         assertNotNull(result)
     }
@@ -48,10 +48,10 @@ class WeatherRepositoryTest {
     @Test
     fun getCurrentWeatherCardErrorTest() = runTest {
 
-        whenever(weatherApi.getWeatherForecast("6183a5484fc64341bce122716231312", "CityName", 1, "no", "no"))
-            .thenThrow(RuntimeException("API call failed"))
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS))
+            .thenThrow(RuntimeException(API_CALL_FAILED))
 
-        val result = weatherRepository.getCurrentWeatherCard("London")
+        val result = weatherRepository.getCurrentWeatherCard(CITY)
 
         assertNull(result)
     }
@@ -59,12 +59,12 @@ class WeatherRepositoryTest {
     @Test
     fun getDaysItemWeatherSuccessTest() = runTest {
 
-        whenever(weatherApi.getWeatherForecast("6183a5484fc64341bce122716231312", "London", 1, "no", "no"))
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS))
             .thenReturn(mockCall)
 
         whenever(mockCall.execute()).thenReturn(Response.success(WeatherResponse()))
 
-        val result = weatherRepository.getDaysItemWeather("London")
+        val result = weatherRepository.getDaysItemWeather(CITY)
 
         assertNotNull(result)
     }
@@ -72,11 +72,20 @@ class WeatherRepositoryTest {
     @Test
     fun getDaysItemWeatherErrorTest() = runTest {
 
-        whenever(weatherApi.getWeatherForecast("6183a5484fc64341bce122716231312", "CityName", 1, "no", "no"))
-            .thenThrow(RuntimeException("API call failed"))
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS))
+            .thenThrow(RuntimeException(API_CALL_FAILED))
 
-        val result = weatherRepository.getDaysItemWeather("London")
+        val result = weatherRepository.getDaysItemWeather(CITY)
 
         assert(result.isEmpty())
+    }
+
+    companion object {
+        private const val API_CALL_FAILED = "API call failed"
+        private const val API_KEY = "6183a5484fc64341bce122716231312"
+        private const val CITY = "London"
+        private const val DAYS = 3
+        private const val AQI = "no"
+        private const val ALERTS = "no"
     }
 }

@@ -12,4 +12,6 @@
     <string name="location_disabled">"Location disabled. Do you want to enable location?"</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="permission_granted">Permission granted!</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

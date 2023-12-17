@@ -60,7 +60,7 @@ class MainFragment : Fragment() {
             daysRecycler.adapter = adapter
             syncButton.setOnClickListener { checkLocation() }
             searchButton.setOnClickListener { showSearchDialog() }
-            celciusToFahrenheitButton.setOnClickListener {
+            celsiusToFahrenheitButton.setOnClickListener {
                 viewModel.isFahrenheit = !viewModel.isFahrenheit
                 viewModel.invalidateData()
             }
@@ -151,7 +151,7 @@ class MainFragment : Fragment() {
 
     private fun permissionListener() {
         resultLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            val message = if (isGranted) "Permission granted!" else "Permission denied"
+            val message = if (isGranted) getString(R.string.permission_granted) else getString(R.string.permission_denied)
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
         }
     }

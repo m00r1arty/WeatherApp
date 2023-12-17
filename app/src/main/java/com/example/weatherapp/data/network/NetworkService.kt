@@ -18,6 +18,9 @@ class NetworkService private constructor() {
         get() = retrofit.create(WeatherApi::class.java)
 
     companion object {
+        private const val BASE_URL = "https://api.weatherapi.com/v1/"
+        private const val EXCEPTION = "Api returns nothing"
+        private const val LOG_TAG = "NetworkService"
 
         @Volatile
         private var instance: NetworkService? = null
@@ -27,19 +30,17 @@ class NetworkService private constructor() {
                 instance ?: NetworkService().also { instance = it }
             }
 
-        private const val BASE_URL = "https://api.weatherapi.com/v1/"
-
         suspend fun <T> handleCall(call: Call<T>): T? = withContext(Dispatchers.Default) {
             return@withContext try {
                 val response = call.execute()
                 if (response.isSuccessful) {
                     return@withContext response.body()
                 } else {
-                    throw IllegalArgumentException("Api returns nothing")
+                    throw IllegalArgumentException(EXCEPTION)
                 }
             } catch (exception: Exception) {
                 val message = "Error executing the request: ${exception.localizedMessage}"
-                Log.e("NetworkService", message)
+                Log.e(LOG_TAG, message)
                 null
             }
         }

@@ -149,7 +149,7 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/celciusToFahrenheitButton"
+                android:id="@+id/celsiusToFahrenheitButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@null"

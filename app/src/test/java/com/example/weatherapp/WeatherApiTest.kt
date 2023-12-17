@@ -26,34 +26,31 @@ class WeatherApiTest {
 
     @Test
     fun getWeatherForecastSuccessTest() {
-        val apiKey = "6183a5484fc64341bce122716231312"
-        val cityName = "London"
-        val days = 1
-        val aqi = "no"
-        val alerts = "no"
 
-        whenever(weatherApi.getWeatherForecast(apiKey, cityName, days, aqi, alerts)).thenReturn(mockCall)
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS)).thenReturn(mockCall)
         whenever(mockCall.execute()).thenReturn(Response.success(WeatherResponse()))
 
-        val response = weatherApi.getWeatherForecast(apiKey, cityName, days, aqi, alerts).execute()
+        val response = weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS).execute()
 
         assert(response.isSuccessful)
     }
 
     @Test
     fun getWeatherForecastErrorTest() {
-        val apiKey = "6183a5484fc64341bce122716231312"
-        val cityName = "London"
-        val days = 1
-        val aqi = "no"
-        val alerts = "no"
-
-        whenever(weatherApi.getWeatherForecast(apiKey, cityName, days, aqi, alerts)).thenReturn(mockCall)
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS)).thenReturn(mockCall)
         whenever(mockCall.execute()).thenReturn(Response.error(404, "".toResponseBody(null)))
 
-        val response = weatherApi.getWeatherForecast(apiKey, cityName, days, aqi, alerts).execute()
+        val response = weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS).execute()
 
         assert(!response.isSuccessful)
+    }
+
+    companion object {
+        private const val API_KEY = "6183a5484fc64341bce122716231312"
+        private const val CITY = "London"
+        private const val DAYS = 3
+        private const val AQI = "no"
+        private const val ALERTS = "no"
     }
 
 }

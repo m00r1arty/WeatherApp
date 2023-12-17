@@ -1,6 +1,5 @@
 package com.example.weatherapp.ui
 
-
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onView
@@ -107,10 +106,10 @@ class MainFragmentTest {
     }
 
     @Test
-    fun celciusToFahrenheitButtonTest() {
-        val celciusToFahrenheitButton = onView(
+    fun celsiusToFahrenheitButton() {
+        val celsiusToFahrenheitButton = onView(
             allOf(
-                withId(R.id.celciusToFahrenheitButton),
+                withId(R.id.celsiusToFahrenheitButton),
                 childAtPosition(
                     childAtPosition(
                         withId(R.id.cardView2),
@@ -120,15 +119,15 @@ class MainFragmentTest {
                 ),
                 isDisplayed()
             )
-        ).perform(waitFor(5000))
+        ).perform(waitFor())
 
-        celciusToFahrenheitButton.perform(click())
+        celsiusToFahrenheitButton.perform(click())
     }
 
-    private fun waitFor(millis: Long): ViewAction {
+    private fun waitFor(): ViewAction {
         return object : ViewAction {
             override fun getDescription(): String {
-                return "Wait for $millis milliseconds."
+                return "Wait for 4000 milliseconds."
             }
 
             override fun getConstraints(): Matcher<View> {
@@ -136,7 +135,7 @@ class MainFragmentTest {
             }
 
             override fun perform(uiController: UiController, view: View) {
-                uiController.loopMainThreadForAtLeast(millis)
+                uiController.loopMainThreadForAtLeast(4000)
             }
         }
     }
