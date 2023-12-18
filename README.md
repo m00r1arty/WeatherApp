@@ -38,6 +38,12 @@ This project is a mobile application to display the current weather and forecast
 - Utilized FusedLocationProviderClient for obtaining the current device location.
 
 ```kotlin
+private fun isLocationPermissionGranted() =
+    ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
 private fun requireLocation(onComplete: (Location?) -> Unit = {}) {
         val cancelToken = CancellationTokenSource()
         if (isLocationPermissionGranted()) {
