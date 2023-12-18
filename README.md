@@ -8,7 +8,7 @@ This project is a mobile application to display the current weather and forecast
 - Optimized code for improved performance and efficiency.
 - Adhered to best practices for Android development, including the use of `Clean Architecture` with MVVM design pattern, `LiveData` for `Databinding`, and Kotlin `coroutines` for asynchronous tasks.
 
-![image](https://github.com/m00r1arty/WeatherApp/assets/70763902/a43bfef6-6620-4e1c-bd4b-c9e69e036c11)
+![structure](https://github.com/m00r1arty/WeatherApp/assets/70763902/a43bfef6-6620-4e1c-bd4b-c9e69e036c11)
 
 
 ## Interface
@@ -22,7 +22,7 @@ This project is a mobile application to display the current weather and forecast
 - Displays current temperature, weather description, and weather icon.
 - Implemented a swipe-to-refresh feature for manually updating weather data.
 
-![structure_layout](https://github.com/m00r1arty/WeatherApp/assets/70763902/f05d4c15-9ee1-4abd-a23e-6e4b0fd5dc41)
+![structure_layout](https://github.com/m00r1arty/WeatherApp/assets/70763902/25802f9b-23b0-4736-8fdb-8f282e8a524b)
 
 
 ### Displaying Weather Forecast
@@ -34,7 +34,6 @@ This project is a mobile application to display the current weather and forecast
 - Implements a feature allowing users to search for weather by location, either by entering a city name or using the device's current location.
 
 ![image](https://github.com/m00r1arty/WeatherApp/assets/70763902/9eb259a1-4351-4213-b55e-e2520479597b)  ![image](https://github.com/m00r1arty/WeatherApp/assets/70763902/130cb906-84b6-4aae-94ee-271d7248a544)
-
 
 - Utilized FusedLocationProviderClient for obtaining the current device location.
 
