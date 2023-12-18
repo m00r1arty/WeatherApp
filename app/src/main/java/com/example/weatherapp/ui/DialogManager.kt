@@ -34,7 +34,7 @@ object DialogManager {
         val editName = EditText(context)
         AlertDialog.Builder(context)
             .setView(editName)
-            .setTitle(context.getString(R.string.city_name))
+            .setTitle(context.getString(R.string.location))
             .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
                 onClick(editName.text.toString())
             }
