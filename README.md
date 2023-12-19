@@ -35,7 +35,7 @@ This project is a mobile application to display the current weather and forecast
 
 ![image](https://github.com/m00r1arty/WeatherApp/assets/70763902/9eb259a1-4351-4213-b55e-e2520479597b)  ![image](https://github.com/m00r1arty/WeatherApp/assets/70763902/130cb906-84b6-4aae-94ee-271d7248a544)
 
-- Utilized FusedLocationProviderClient for obtaining the current device location.
+- Utilized `FusedLocationProviderClient` for obtaining the current device location.
 
 ```kotlin
 private fun isLocationPermissionGranted() =
@@ -66,12 +66,12 @@ private fun requireLocation(onComplete: (Location?) -> Unit = {}) {
 ## Retrieving Weather Data
 **Using Weather API**
 
-- Integrated a weather API, such as the Weather API, to retrieve weather data for the current location or user-selected location.
+- Integrated a weather API, such as the **Weather API**, to retrieve weather data for the current location or user-selected location.
 - Implemented asynchronous network calls using Retrofit to fetch data from the API in the background.
 
 ## Testing
 - Develops modular and/or instrumental tests to verify various application functions, including fetching weather data from the API, updating the UI with weather data, and unit conversion.
-- Utilizes testing tools like JUnit, Mockito, and Espresso.
+- Utilizes testing tools like `JUnit`, `Mockito`, and `Espresso`.
  
 **Example test**:
 ```kotlin
