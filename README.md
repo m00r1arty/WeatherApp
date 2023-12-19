@@ -6,7 +6,7 @@ This project is a mobile application to display the current weather and forecast
 
 ## Code Optimization
 - Optimized code for improved performance and efficiency.
-- Adhered to best practices for Android development, including the use of `Clean Architecture` with MVVM design pattern, `LiveData` for `Databinding`, and Kotlin `coroutines` for asynchronous tasks.
+- Adhered to best practices for Android development, including the use of `Clean Architecture` with `MVVM` design pattern, `LiveData` for `Databinding`, and Kotlin `coroutines` for asynchronous tasks.
 
 ![structure](https://github.com/m00r1arty/WeatherApp/assets/70763902/a43bfef6-6620-4e1c-bd4b-c9e69e036c11)
 
