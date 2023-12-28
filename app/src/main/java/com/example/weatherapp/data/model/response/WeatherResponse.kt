@@ -4,7 +4,6 @@ import com.example.weatherapp.data.model.response.responsebody.CurrentForecastRe
 import com.example.weatherapp.data.model.response.responsebody.ForecastResponse
 import com.example.weatherapp.data.model.response.responsebody.LocationResponse
 import com.google.gson.annotations.SerializedName
-import retrofit2.Call
 
 data class WeatherResponse(
     @SerializedName("location") val location: LocationResponse? = null,
