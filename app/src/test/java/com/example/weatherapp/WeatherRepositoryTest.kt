@@ -6,6 +6,7 @@ import com.example.weatherapp.data.repositories.WeatherRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -35,7 +36,7 @@ class WeatherRepositoryTest {
     @Test
     fun getCurrentWeatherCardSuccessTest() = runTest {
 
-        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAYS, AQI, ALERTS))
+        whenever(weatherApi.getWeatherForecast(API_KEY, CITY, DAY, AQI, ALERTS))
             .thenReturn(mockCall)
 
         whenever(mockCall.execute()).thenReturn(Response.success(WeatherResponse()))
@@ -77,7 +78,7 @@ class WeatherRepositoryTest {
 
         val result = weatherRepository.getDaysItemWeather(CITY)
 
-        assert(result.isEmpty())
+        assertTrue(result.isEmpty())
     }
 
     companion object {
@@ -85,6 +86,7 @@ class WeatherRepositoryTest {
         private const val API_KEY = "6183a5484fc64341bce122716231312"
         private const val CITY = "London"
         private const val DAYS = 3
+        private const val DAY = 1
         private const val AQI = "no"
         private const val ALERTS = "no"
     }

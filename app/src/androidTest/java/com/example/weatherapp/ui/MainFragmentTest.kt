@@ -135,7 +135,7 @@ class MainFragmentTest {
             }
 
             override fun perform(uiController: UiController, view: View) {
-                uiController.loopMainThreadForAtLeast(4000)
+                uiController.loopMainThreadForAtLeast(7000)
             }
         }
     }
