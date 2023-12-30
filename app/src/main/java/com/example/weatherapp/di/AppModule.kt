@@ -28,5 +28,4 @@ object AppModule {
         return WeatherRepository(weatherApi)
     }
 
-
 }
